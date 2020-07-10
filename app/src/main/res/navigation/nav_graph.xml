@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/world">
+    <fragment
+        android:id="@+id/world"
+        android:name="com.smartherd.covid_19stats.view.WorldFragment"
+        android:label="fragment_world"
+        tools:layout="@layout/fragment_world" />
+    <fragment
+        android:id="@+id/country"
+        android:name="com.smartherd.covid_19stats.view.CountriesFragment"
+        android:label="fragment_countries"
+        tools:layout="@layout/fragment_countries" >
+        <action
+            android:id="@+id/action_countriesFragment2_to_countryDetailFragment2"
+            app:destination="@id/countryDetailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/countryDetailFragment2"
+        android:name="com.smartherd.covid_19stats.view.CountryDetailFragment"
+        android:label="fragment_country_detail"
+        tools:layout="@layout/fragment_country_detail" />
+</navigation>
