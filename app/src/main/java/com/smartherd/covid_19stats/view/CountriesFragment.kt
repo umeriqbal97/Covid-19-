@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smartherd.covid_19stats.adapter.CountriesAdapter
@@ -21,9 +23,11 @@ import retrofit2.Response
 /**
  * A simple [Fragment] subclass.
  */
-class CountriesFragment : Fragment() {
+class CountriesFragment : Fragment(),CountriesAdapter.OnDetailCountryClick {
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var navController: NavController
+    private lateinit var sortedList: List<Country>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +40,7 @@ class CountriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController=Navigation.findNavController(view)
         recyclerView=view.findViewById(R.id.recyclerView)
 
         val webCountryInterface=ServiceBuilder.buildService(WebCountriesInterface::class.java)
@@ -56,13 +61,14 @@ class CountriesFragment : Fragment() {
                         recyclerView.layoutManager = layoutManager
 
                         // sorting the list
-                        val sortedList =
-                            country?.sortedWith(compareByDescending({ it.cases }))
+                        sortedList =
+                            country?.sortedWith(compareByDescending({ it.cases }))!!
 
                         recyclerView.adapter = sortedList?.let {
                             CountriesAdapter(
                                 requireContext(),
-                                sortedList
+                                sortedList,
+                                this@CountriesFragment
                             )
                         }
                     } catch (e: Exception) {
@@ -75,6 +81,15 @@ class CountriesFragment : Fragment() {
             }
 
         })
+
+    }
+
+    override fun detailCountry(position: Int) {
+
+        val bundle=Bundle()
+        bundle.putParcelable("detail",sortedList[position])
+        bundle.putInt("rank",position+1)
+        navController.navigate(R.id.action_countriesFragment2_to_countryDetailFragment2,bundle)
 
     }
 

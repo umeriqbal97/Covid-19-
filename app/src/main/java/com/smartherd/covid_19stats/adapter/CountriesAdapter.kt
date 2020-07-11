@@ -12,19 +12,24 @@ import kotlinx.android.synthetic.main.recycler_view_item.view.*
 import java.text.NumberFormat
 import java.util.*
 
-class CountriesAdapter(val context: Context, val list: List<Country>) : RecyclerView.Adapter<CountriesAdapter.CountriesViewHolder>() {
-    inner class CountriesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class CountriesAdapter(val context: Context, val list: List<Country>,val listener:OnDetailCountryClick) : RecyclerView.Adapter<CountriesAdapter.CountriesViewHolder>() {
+    inner class CountriesViewHolder(itemView: View,var click:OnDetailCountryClick): RecyclerView.ViewHolder(itemView),View.OnClickListener {
         fun setData(country:Country,position: Int){
             itemView.country_name.text=country.country
             itemView.country_rank.text=(position+1).toString()
-            Glide.with(context).load(country.countryInfo?.flag).into(itemView.country_flag)
+            Glide.with(context).load(country.countryInfo.flag).into(itemView.country_flag)
             itemView.num_of_cases.text=NumberFormat.getNumberInstance(Locale.getDefault()).format(country.cases)
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            click.detailCountry(adapterPosition)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountriesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item, parent, false)
-        return CountriesViewHolder(view)
+        return CountriesViewHolder(view,listener)
 
     }
 
@@ -35,6 +40,10 @@ class CountriesAdapter(val context: Context, val list: List<Country>) : Recycler
     override fun onBindViewHolder(holder: CountriesViewHolder, position: Int) {
         val country=list[position]
         holder.setData(country,position)
+    }
+
+    interface OnDetailCountryClick{
+        fun detailCountry(position: Int)
     }
 
 }
